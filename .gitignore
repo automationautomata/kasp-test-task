@@ -1,0 +1,6 @@
+.temp
+.vscode
+__pycache__
+.coverage
+todo.md
+.env
