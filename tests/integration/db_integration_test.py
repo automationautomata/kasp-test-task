@@ -21,7 +21,6 @@ def engine():
 
 @pytest.fixture(scope="session")
 def sessionmaker(engine):
-
     return async_sessionmaker(bind=engine)
 
 
@@ -41,7 +40,7 @@ def db_storage(sessionmaker):
     ],
 )
 async def test_save_and_get_single_parametrized(db_storage, stat):
-    await db_storage.save("test_key", stat)
+    await db_storage.save("test_key", [stat])
     result = await db_storage.get("test_key")
     assert len(result) == 1
     assert result[0] == stat
@@ -62,8 +61,7 @@ async def test_save_and_get_single_parametrized(db_storage, stat):
     ],
 )
 async def test_save_multiple_and_get(db_storage, stats):
-    for stat in stats:
-        await db_storage.save("test_key", stat)
+    await db_storage.save("test_key", stats)    
 
     result = await db_storage.get("test_key")
     assert len(result) == 3
@@ -82,7 +80,7 @@ async def test_save_error(mocker, db_storage):
 
     stat = LemmasStatistics(ind=1, lemmas_counts={}, is_line_ends=False)
     with pytest.raises(StatisticsStorageError):
-        await db_storage.save("key", stat)
+        await db_storage.save("key", [stat])
 
 
 @pytest.mark.asyncio

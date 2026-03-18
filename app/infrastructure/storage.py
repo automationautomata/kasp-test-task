@@ -28,14 +28,29 @@ class DBStatisticsStorage:
     def __init__(self, sessionmaker: async_sessionmaker[AsyncSession]):
         self.sessionmaker = sessionmaker
 
-    async def save(self, key: str, stat: LemmasStatistics):
-        bindata = pickle.dumps(
-            {"counts": stat.lemmas_counts, "is_line_ends": stat.is_line_ends}
-        )
+    async def save(self, key: str, stats: list[LemmasStatistics]):
+        def to_bindata(stat):
+            return pickle.dumps(
+                {
+                    "counts": stat.lemmas_counts,
+                    "is_line_ends": stat.is_line_ends,
+                }
+            )
+
+        if len(stats) == 0:
+            return
+
         try:
             async with self.sessionmaker() as session:
                 stmt = insert(LemmaCountsModel).values(
-                    [dict(group=key, group_serial_number=stat.ind, counts=bindata)]
+                    [
+                        dict(
+                            group=key,
+                            group_serial_number=stat.ind,
+                            counts=to_bindata(stat),
+                        )
+                        for stat in stats
+                    ]
                 )
 
                 await session.execute(stmt)

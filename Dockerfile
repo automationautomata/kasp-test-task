@@ -23,8 +23,9 @@ FROM base as runtime
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 
 
-ENV DB_DSN=sqlite+aiosqlite:///$APP_DATA_DIR/app_storage.db \
-    CACHE_MAXSIZE=1000 \
+ENV DB_DSN=sqlite+aiosqlite:///${APP_DATA_DIR}/app_storage.db \
+    LEMMAS_CACHE_MAXSIZE=1000 \
+    SAVE_BUTCH_SIZE=200 \
     WRITER_CHUNK_SIZE_KB=8 \
     UPLOAD_CHUNK_SIZE_MB=2 \
     MAX_UPLOADING_USERS=10 \

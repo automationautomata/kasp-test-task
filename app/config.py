@@ -20,4 +20,5 @@ class AppConfig(BaseSettings):
     upload_chunk_size_mb: int = 1
     max_uploading_users: int = 10
     workers_type: WorkersType = "processes"
+    save_batch_size: int = 200
     file_uploading_limit_gb: int | None = None

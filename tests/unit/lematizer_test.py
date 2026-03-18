@@ -47,7 +47,7 @@ def test_count_lemmas(
         "app.infrastructure.lemmatizer.tokenize", lambda _: map(DummyToken, tokens)
     )
     monkeypatch.setattr(
-        "app.infrastructure.lemmatizer.get_worker_analyzer", lambda: mock_morph
+        "app.infrastructure.lemmatizer._get_analyzer", lambda: mock_morph
     )
 
     counter = lemmatizer.Pymorphy3LemmasCounter()
@@ -60,10 +60,10 @@ def test_count_lemmas(
 def test_lru_cache_behavior(monkeypatch, mock_morph):
     cache_size = 2
 
-    os.environ["APP_LEMMAS_CACHE_MAXSIZE"] = str(cache_size)
+    os.environ["LEMMAS_CACHE_MAXSIZE"] = str(cache_size)
     importlib.reload(lemmatizer)
     monkeypatch.setattr(
-        "app.infrastructure.lemmatizer.get_worker_analyzer", lambda: mock_morph
+        "app.infrastructure.lemmatizer._get_analyzer", lambda: mock_morph
     )
     counter = lemmatizer.Pymorphy3LemmasCounter()
 

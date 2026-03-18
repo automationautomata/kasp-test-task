@@ -18,7 +18,7 @@ router = APIRouter(route_class=DishkaRoute)
 
 ChunkSizeMB = int
 
-
+# UploadFile вместо Request.stream из-за типизации
 @router.post("/public/report/export")
 async def handler(
     file: UploadFile,

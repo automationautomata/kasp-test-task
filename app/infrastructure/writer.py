@@ -20,11 +20,11 @@ class XLSXStreamWriter:
                     ws.write(row_idx, col_idx, value)
 
                 output.seek(0, 2)
-                if output.tell()/1024 >= self.chunk_size_kb:
+                if output.tell() / 1024 >= self.chunk_size_kb:
                     yield output.getvalue()
                     output.seek(0)
                     output.truncate(0)
 
         output.seek(0, 2)
-        if output.tell()/1024 > 0:
+        if output.tell() / 1024 > 0:
             yield output.getvalue()

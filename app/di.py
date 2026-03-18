@@ -1,6 +1,7 @@
 import asyncio
 from concurrent.futures import Executor, ProcessPoolExecutor, ThreadPoolExecutor
 from logging import Logger, getLogger
+from typing import Any, Callable
 
 from dishka import Provider, Scope, from_context, provide
 
@@ -10,6 +11,9 @@ ExecutorMaxWorkers = int
 
 
 MaxUploadingUsers = int
+
+
+ExecutorInitializer = Callable[[], Any]
 
 
 class LoggerProvider(Provider):
@@ -32,8 +36,11 @@ class ExecutorProvider(Provider):
 
     @provide(scope=Scope.APP)
     def executor(
-        self, max_workers: ExecutorMaxWorkers, workers_type: WorkersType
+        self,
+        max_workers: ExecutorMaxWorkers,
+        workers_type: WorkersType,
+        initializer: ExecutorInitializer,
     ) -> Executor:
         if workers_type == "threads":
-            return ThreadPoolExecutor(max_workers=max_workers)
-        return ProcessPoolExecutor(max_workers=max_workers)
+            return ThreadPoolExecutor(max_workers=max_workers, initializer=initializer)
+        return ProcessPoolExecutor(max_workers=max_workers, initializer=initializer)

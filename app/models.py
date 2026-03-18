@@ -23,10 +23,10 @@ class ChunkReader:
         self.chunk_size = chunk_size
         self.file = file
 
-    def __aiter__(self) -> AsyncGenerator[Chunk]:
+    def __aiter__(self) -> AsyncGenerator[Chunk, None]:
         return self.__read()
 
-    async def __read(self) -> AsyncGenerator[Chunk]:
+    async def __read(self) -> AsyncGenerator[Chunk, None]:
         str_buf = ""
         bytes_num = self.chunk_size * self._MB
 
@@ -39,7 +39,7 @@ class ChunkReader:
 
             str_chunk = decoder.decode(chunk, final=is_final_chunk)
             if str_buf and not str_chunk:
-                i+=1
+                i += 1
                 yield Chunk(i, str_buf, False)
                 return
             elif not str_chunk:
@@ -49,15 +49,14 @@ class ChunkReader:
             lines[0] = f"{str_buf}{lines[0]}"
 
             for line in lines[:-1]:
-                i+=1
+                i += 1
                 yield Chunk(i, line, True)
 
             valid_chunk, str_buf = self.__split_by_last_nonletter(lines[-1])
             if valid_chunk:
-                i+=1
+                i += 1
                 yield Chunk(i, valid_chunk, False)
 
-            
     @classmethod
     def __split_by_last_nonletter(cls, str_chunk: str) -> tuple[str, str]:
         for i in range(len(str_chunk) - 1, 0, -1):

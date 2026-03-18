@@ -8,12 +8,13 @@ from razdel import tokenize
 _morph_analyzer = None
 
 
-def get_worker_analyzer():
+def _get_analyzer():
     global _morph_analyzer
     if _morph_analyzer is None:
         _morph_analyzer = create_analyzer()
 
     return _morph_analyzer
+
 
 class Pymorphy3LemmasCounter:
     def count_lemmas(self, text: str) -> dict[str, int]:
@@ -25,9 +26,9 @@ class Pymorphy3LemmasCounter:
 
         return counter
 
-    @lru_cache(maxsize=int(os.getenv("APP_LEMMAS_CACHE_MAXSIZE", "0")))
+    @lru_cache(maxsize=int(os.getenv("LEMMAS_CACHE_MAXSIZE", "0")))
     def _to_normal_form(self, word: str):
-        morph = get_worker_analyzer()
+        morph = _get_analyzer()
         parses = morph.parse(word)
         if parses:
             return parses[0].normal_form

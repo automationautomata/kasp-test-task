@@ -16,7 +16,6 @@ XLSXWriterChunkSize = int
 
 
 class LemmasCounterProvider(Provider):
-
     @provide(scope=Scope.REQUEST)
     def lemmas_counter(self) -> LemmasCounterProtocol:
         return Pymorphy3LemmasCounter()
@@ -27,7 +26,7 @@ class StorageProvider(Provider):
 
     @provide(scope=Scope.APP)
     async def session(self, engine: AsyncEngine) -> async_sessionmaker[AsyncSession]:
-        return async_sessionmaker(bind=engine, expire_on_commit=True)
+        return async_sessionmaker(bind=engine, expire_on_commit=False)
 
     @provide(scope=Scope.REQUEST)
     def statistics_storage(
